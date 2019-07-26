@@ -1,9 +1,10 @@
 package UrlExtend
 
 import (
-	DevLogs "MiniWeb/DevLogs"
 	"net/url"
 	"strings"
+
+	DevLogs "github.com/MiniWeb/DevLogs"
 )
 
 func (self *TUrl) SetUrl(URL string) {

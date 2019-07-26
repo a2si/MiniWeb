@@ -3,10 +3,11 @@ package Cookie
 import (
 	"encoding/json"
 	"fmt"
-	"goCore/Core/Common"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	mwCommon "github.com/MiniWeb/Common"
 )
 
 type Cookie struct {
@@ -46,7 +47,7 @@ func (self *Cookie) GetSaveCookie() bool {
 
 func (self *Cookie) SetCookieDir(CookieDir string) {
 	self.CookieDir = CookieDir
-	if !Common.DirExists(CookieDir) {
+	if !mwCommon.DirExists(CookieDir) {
 		os.MkdirAll(CookieDir, 0777)
 	}
 }
@@ -85,7 +86,7 @@ func (self *Cookie) Dump() {
 func (self *Cookie) LoadCookie() {
 	self.Clear()
 	if self.bSaveCookie {
-		if Common.FileExists(self.ckFile) && !Common.DirExists(self.ckFile) {
+		if mwCommon.FileExists(self.ckFile) && !mwCommon.DirExists(self.ckFile) {
 			info, err := ioutil.ReadFile(self.ckFile)
 			if err == nil {
 				json.Unmarshal(info, &self.Cookie)
@@ -97,8 +98,8 @@ func (self *Cookie) LoadCookie() {
 
 func (self *Cookie) SaveCookie() {
 	if self.bSaveCookie {
-		if len(self.ckFile) > 0 && !Common.DirExists(self.ckFile) {
-			if Common.FileExists(self.ckFile) {
+		if len(self.ckFile) > 0 && !mwCommon.DirExists(self.ckFile) {
+			if mwCommon.FileExists(self.ckFile) {
 				os.Remove(self.ckFile)
 			}
 			info, _ := json.Marshal(self.Cookie)
@@ -109,7 +110,7 @@ func (self *Cookie) SaveCookie() {
 
 func (self *Cookie) RemoveSaveCookie() {
 	self.Cookie = make(map[string]string)
-	if Common.FileExists(self.ckFile) && !Common.DirExists(self.ckFile) {
+	if mwCommon.FileExists(self.ckFile) && !mwCommon.DirExists(self.ckFile) {
 		os.Remove(self.ckFile)
 	}
 

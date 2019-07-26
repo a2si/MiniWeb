@@ -1,13 +1,14 @@
 package MiniWeb
 
 import (
-	mwCookie "MiniWeb/Cookie"
-	mwCore "MiniWeb/Core"
-	DevLogs "MiniWeb/DevLogs"
-	mwHeader "MiniWeb/Header"
-	mwURL "MiniWeb/UrlExtend"
-	mwUserAgent "MiniWeb/UserAgent"
 	"time"
+
+	mwCookie "github.com/MiniWeb/Cookie"
+	mwCore "github.com/MiniWeb/Core"
+	DevLogs "github.com/MiniWeb/DevLogs"
+	mwHeader "github.com/MiniWeb/Header"
+	mwURL "github.com/MiniWeb/UrlExtend"
+	mwUserAgent "github.com/MiniWeb/UserAgent"
 )
 
 const (

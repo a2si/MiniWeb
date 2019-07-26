@@ -1,11 +1,12 @@
 package MiniWeb
 
 import (
-	mwCookie "MiniWeb/Cookie"
-	DevLogs "MiniWeb/DevLogs"
-	mwHeader "MiniWeb/Header"
 	"net/url"
 	"time"
+
+	mwCookie "github.com/MiniWeb/Cookie"
+	DevLogs "github.com/MiniWeb/DevLogs"
+	mwHeader "github.com/MiniWeb/Header"
 )
 
 func (self *miniWeb) initMiniWebClient() {

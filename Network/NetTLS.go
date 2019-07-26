@@ -1,13 +1,14 @@
 package Network
 
 import (
-	mwCommon "MiniWeb/Common"
 	"bufio"
 	"crypto/tls"
 	"fmt"
 	"net"
 	"strconv"
 	"time"
+
+	mwCommon "github.com/MiniWeb/Common"
 )
 
 type NetTls struct {

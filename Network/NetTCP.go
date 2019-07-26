@@ -1,12 +1,13 @@
 package Network
 
 import (
-	mwCommon "MiniWeb/Common"
 	"bufio"
 	"fmt"
 	"net"
 	"strconv"
 	"time"
+
+	mwCommon "github.com/MiniWeb/Common"
 )
 
 type NetTCP struct {

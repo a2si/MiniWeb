@@ -11,10 +11,26 @@ func CopyMergeSlice(s1 []byte, s2 []byte) []byte {
 	return slice
 }
 
+func IsExists(Path string) bool {
+	f, _ := os.Stat(Path)
+	if f == nil {
+		return false
+	}
+	return false
+}
+
 func FileExists(FileName string) bool {
 	f, _ := os.Stat(FileName)
 	if f == nil {
 		return false
 	}
 	return !f.IsDir()
+}
+
+func DirExists(DirName string) bool {
+	f, _ := os.Stat(DirName)
+	if f == nil {
+		return false
+	}
+	return f.IsDir()
 }

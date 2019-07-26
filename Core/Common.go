@@ -1,10 +1,11 @@
 package Core
 
 import (
-	mwCookie "MiniWeb/Cookie"
-	mwHeader "MiniWeb/Header"
-	mwURL "MiniWeb/UrlExtend"
 	"time"
+
+	mwCookie "github.com/MiniWeb/Cookie"
+	mwHeader "github.com/MiniWeb/Header"
+	mwURL "github.com/MiniWeb/UrlExtend"
 )
 
 type WebCore struct {

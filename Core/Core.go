@@ -1,9 +1,6 @@
 package Core
 
 import (
-	mwCommon "MiniWeb/Common"
-	DevLogs "MiniWeb/DevLogs"
-	mwNet "MiniWeb/Network"
 	"bytes"
 	"compress/gzip"
 	"crypto/md5"
@@ -12,6 +9,10 @@ import (
 	"mime/multipart"
 	"strconv"
 	"strings"
+
+	mwCommon "github.com/MiniWeb/Common"
+	DevLogs "github.com/MiniWeb/DevLogs"
+	mwNet "github.com/MiniWeb/Network"
 )
 
 func (self *WebCore) InitHeader() {
