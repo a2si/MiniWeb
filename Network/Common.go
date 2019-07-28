@@ -5,8 +5,8 @@ import (
 	"net"
 	"time"
 
-	mwProxy "github.com/MiniWeb/Proxy"
-	mwError "github.com/MiniWeb/mwError"
+	mwProxy "github.com/a2si/MiniWeb/Proxy"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 type TNet struct {

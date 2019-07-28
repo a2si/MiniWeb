@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	DevLogs "github.com/MiniWeb/DevLogs"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
 func (self *TUrl) SetUrl(URL string) {

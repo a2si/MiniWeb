@@ -1,6 +1,6 @@
 package mwError
 
-import mwConst "github.com/MiniWeb/mwConst"
+import mwConst "github.com/a2si/MiniWeb/mwConst"
 
 func (self *TError) IsError() bool {
 	return self.prv_ErrCode != mwConst.ERROR_NO_ERROR

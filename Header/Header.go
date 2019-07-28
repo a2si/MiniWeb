@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	mwError "github.com/MiniWeb/mwError"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 type Header struct {

@@ -1,7 +1,7 @@
 package MiniWeb
 
 import (
-	DevLogs "github.com/MiniWeb/DevLogs"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
 func (slef *tsConfig) RandUserAgent(IsRand bool) {

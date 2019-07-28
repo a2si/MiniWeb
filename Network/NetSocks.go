@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	DevLogs "github.com/MiniWeb/DevLogs"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
 func (self *TNet) genSocksV4Connect(Host string, Port string) []byte {

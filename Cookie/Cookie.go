@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	mwCommon "github.com/MiniWeb/Common"
-	mwError "github.com/MiniWeb/mwError"
+	mwCommon "github.com/a2si/MiniWeb/Common"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 type Cookie struct {

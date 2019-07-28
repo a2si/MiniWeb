@@ -4,10 +4,10 @@ import (
 	"net/url"
 	"time"
 
-	mwCookie "github.com/MiniWeb/Cookie"
-	DevLogs "github.com/MiniWeb/DevLogs"
-	mwHeader "github.com/MiniWeb/Header"
-	mwProxy "github.com/MiniWeb/Proxy"
+	mwCookie "github.com/a2si/MiniWeb/Cookie"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
+	mwHeader "github.com/a2si/MiniWeb/Header"
+	mwProxy "github.com/a2si/MiniWeb/Proxy"
 )
 
 func (self *miniWeb) initMiniWebClient() {

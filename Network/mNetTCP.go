@@ -5,8 +5,8 @@ import (
 	"net"
 	"strings"
 
-	DevLogs "github.com/MiniWeb/DevLogs"
-	mwConst "github.com/MiniWeb/mwConst"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
+	mwConst "github.com/a2si/MiniWeb/mwConst"
 )
 
 func (self *TNet) StartNetwork(d net.Dialer, Host string, Port string) net.Conn {

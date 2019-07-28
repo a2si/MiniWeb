@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	mwCommon "github.com/MiniWeb/Common"
-	DevLogs "github.com/MiniWeb/DevLogs"
-	mwNet "github.com/MiniWeb/Network"
-	mwConst "github.com/MiniWeb/mwConst"
+	mwCommon "github.com/a2si/MiniWeb/Common"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
+	mwNet "github.com/a2si/MiniWeb/Network"
+	mwConst "github.com/a2si/MiniWeb/mwConst"
 )
 
 func (self *WebCore) InitHeader() {

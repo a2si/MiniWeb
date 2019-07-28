@@ -3,7 +3,7 @@ package UrlExtend
 import (
 	"net/url"
 
-	mwError "github.com/MiniWeb/mwError"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 type TUrl struct {

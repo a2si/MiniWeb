@@ -1,8 +1,8 @@
 package Proxy
 
 import (
-	mwConst "github.com/MiniWeb/mwConst"
-	mwError "github.com/MiniWeb/mwError"
+	mwConst "github.com/a2si/MiniWeb/mwConst"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 type TProxy struct {

@@ -3,11 +3,11 @@ package Core
 import (
 	"time"
 
-	mwCookie "github.com/MiniWeb/Cookie"
-	mwHeader "github.com/MiniWeb/Header"
-	mwProxy "github.com/MiniWeb/Proxy"
-	mwURL "github.com/MiniWeb/UrlExtend"
-	mwError "github.com/MiniWeb/mwError"
+	mwCookie "github.com/a2si/MiniWeb/Cookie"
+	mwHeader "github.com/a2si/MiniWeb/Header"
+	mwProxy "github.com/a2si/MiniWeb/Proxy"
+	mwURL "github.com/a2si/MiniWeb/UrlExtend"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 type WebCore struct {

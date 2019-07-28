@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"time"
 
-	DevLogs "github.com/MiniWeb/DevLogs"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
 func (self *TNet) netIO2BufferIO() {

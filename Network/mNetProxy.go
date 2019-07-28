@@ -4,7 +4,7 @@ import (
 	"net"
 	"strconv"
 
-	DevLogs "github.com/MiniWeb/DevLogs"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
 func (self *TNet) InitProxyHttps(conn net.Conn, Host string, Port string) {

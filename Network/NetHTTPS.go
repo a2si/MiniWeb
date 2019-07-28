@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	mwCommon "github.com/MiniWeb/Common"
-	DevLogs "github.com/MiniWeb/DevLogs"
+	mwCommon "github.com/a2si/MiniWeb/Common"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
 func (self *TNet) genHttpProxyReqHeader(Host string, Port string) string {

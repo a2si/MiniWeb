@@ -3,14 +3,14 @@ package MiniWeb
 import (
 	"time"
 
-	mwCookie "github.com/MiniWeb/Cookie"
-	mwCore "github.com/MiniWeb/Core"
-	DevLogs "github.com/MiniWeb/DevLogs"
-	mwHeader "github.com/MiniWeb/Header"
-	mwProxy "github.com/MiniWeb/Proxy"
-	mwURL "github.com/MiniWeb/UrlExtend"
-	mwUserAgent "github.com/MiniWeb/UserAgent"
-	mwError "github.com/MiniWeb/mwError"
+	mwCookie "github.com/a2si/MiniWeb/Cookie"
+	mwCore "github.com/a2si/MiniWeb/Core"
+	DevLogs "github.com/a2si/MiniWeb/DevLogs"
+	mwHeader "github.com/a2si/MiniWeb/Header"
+	mwProxy "github.com/a2si/MiniWeb/Proxy"
+	mwURL "github.com/a2si/MiniWeb/UrlExtend"
+	mwUserAgent "github.com/a2si/MiniWeb/UserAgent"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
 const (

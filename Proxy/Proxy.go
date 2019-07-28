@@ -1,7 +1,7 @@
 package Proxy
 
 import (
-	mwConst "github.com/MiniWeb/mwConst"
+	mwConst "github.com/a2si/MiniWeb/mwConst"
 )
 
 func (self *TProxy) SetProxyType(pType int) {
