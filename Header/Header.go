@@ -3,15 +3,19 @@ package Header
 import (
 	"fmt"
 	"strings"
+
+	mwError "github.com/MiniWeb/mwError"
 )
 
 type Header struct {
-	header map[string]string // HEADER 信息
+	header   map[string]string // HEADER 信息
+	ObjError *mwError.TError   // Error Object
 }
 
-func NewHeader() *Header {
+func NewHeader(errObj *mwError.TError) *Header {
 	Obj := &Header{
-		header: make(map[string]string),
+		header:   make(map[string]string),
+		ObjError: errObj,
 	}
 	return Obj
 }

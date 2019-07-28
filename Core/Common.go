@@ -5,7 +5,9 @@ import (
 
 	mwCookie "github.com/MiniWeb/Cookie"
 	mwHeader "github.com/MiniWeb/Header"
+	mwProxy "github.com/MiniWeb/Proxy"
 	mwURL "github.com/MiniWeb/UrlExtend"
+	mwError "github.com/MiniWeb/mwError"
 )
 
 type WebCore struct {
@@ -24,4 +26,6 @@ type WebCore struct {
 	Cookie         *mwCookie.Cookie  // Cookie
 	ReqHeader      *mwHeader.Header  // 请求 Request Header
 	RspHeader      *mwHeader.Header  // 响应 Response Header
+	Proxy          *mwProxy.TProxy   // Proxy Module
+	ObjError       *mwError.TError   // Error Object
 }

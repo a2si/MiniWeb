@@ -8,31 +8,34 @@ import (
 	"strings"
 
 	mwCommon "github.com/MiniWeb/Common"
+	mwError "github.com/MiniWeb/mwError"
 )
 
 type Cookie struct {
-	BaseURI     string            // URL地址
-	bSaveCookie bool              // 是否保存COOKIE
-	CookieDir   string            // COOKIE 保存路径
-	ckFile      string            // COOKIE 文件完整路径
-	Cookie      map[string]string // COOKIE 信息
+	prv_BaseURI   string            // URL地址
+	bSaveCookie   bool              // 是否保存COOKIE
+	prv_CookieDir string            // COOKIE 保存路径
+	ckFile        string            // COOKIE 文件完整路径
+	prv_Cookie    map[string]string // COOKIE 信息
+	ObjError      *mwError.TError   // Error Object
 }
 
-func NewCookie() *Cookie {
+func NewCookie(errObj *mwError.TError) *Cookie {
 	Obj := &Cookie{
-		BaseURI:     "",
-		bSaveCookie: false,
-		CookieDir:   "",
-		ckFile:      "",
-		Cookie:      make(map[string]string),
+		prv_BaseURI:   "",
+		bSaveCookie:   false,
+		prv_CookieDir: "",
+		ckFile:        "",
+		prv_Cookie:    make(map[string]string),
+		ObjError:      errObj,
 	}
 	return Obj
 }
 
 func (self *Cookie) SetURL(URL string) {
-	self.BaseURI = URL
+	self.prv_BaseURI = URL
 	Spr := string(os.PathSeparator)
-	self.ckFile = fmt.Sprintf("%s%s%s.cookie", self.CookieDir, Spr, URL)
+	self.ckFile = fmt.Sprintf("%s%s%s.cookie", self.prv_CookieDir, Spr, URL)
 	self.LoadCookie()
 }
 
@@ -46,38 +49,38 @@ func (self *Cookie) GetSaveCookie() bool {
 }
 
 func (self *Cookie) SetCookieDir(CookieDir string) {
-	self.CookieDir = CookieDir
+	self.prv_CookieDir = CookieDir
 	if !mwCommon.DirExists(CookieDir) {
 		os.MkdirAll(CookieDir, 0777)
 	}
 }
 
 func (self *Cookie) Clear() {
-	self.Cookie = make(map[string]string)
+	self.prv_Cookie = make(map[string]string)
 }
 
 func (self *Cookie) Count() int {
-	return len(self.Cookie)
+	return len(self.prv_Cookie)
 }
 
 func (self *Cookie) SetCookie(CookieName string, CookieValue string) {
-	self.Cookie[CookieName] = CookieValue
+	self.prv_Cookie[CookieName] = CookieValue
 }
 
 func (self *Cookie) GetCookie(CookieName string) string {
-	return self.Cookie[CookieName]
+	return self.prv_Cookie[CookieName]
 }
 
 func (self *Cookie) GetAllCookie() string {
 	var dwRet string
-	for k, v := range self.Cookie {
+	for k, v := range self.prv_Cookie {
 		dwRet = fmt.Sprintf("%s%s=%s; ", dwRet, k, v)
 	}
 	return dwRet
 }
 
 func (self *Cookie) Dump() {
-	for k, v := range self.Cookie {
+	for k, v := range self.prv_Cookie {
 		dwRet := fmt.Sprintf("%s=%s", k, v)
 		fmt.Println(dwRet)
 	}
@@ -89,7 +92,7 @@ func (self *Cookie) LoadCookie() {
 		if mwCommon.FileExists(self.ckFile) && !mwCommon.DirExists(self.ckFile) {
 			info, err := ioutil.ReadFile(self.ckFile)
 			if err == nil {
-				json.Unmarshal(info, &self.Cookie)
+				json.Unmarshal(info, &self.prv_Cookie)
 			}
 		}
 	}
@@ -102,14 +105,14 @@ func (self *Cookie) SaveCookie() {
 			if mwCommon.FileExists(self.ckFile) {
 				os.Remove(self.ckFile)
 			}
-			info, _ := json.Marshal(self.Cookie)
+			info, _ := json.Marshal(self.prv_Cookie)
 			ioutil.WriteFile(self.ckFile, info, 0777)
 		}
 	}
 }
 
 func (self *Cookie) RemoveSaveCookie() {
-	self.Cookie = make(map[string]string)
+	self.prv_Cookie = make(map[string]string)
 	if mwCommon.FileExists(self.ckFile) && !mwCommon.DirExists(self.ckFile) {
 		os.Remove(self.ckFile)
 	}

@@ -7,12 +7,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
+	"net"
 	"strconv"
 	"strings"
+	"time"
 
 	mwCommon "github.com/MiniWeb/Common"
 	DevLogs "github.com/MiniWeb/DevLogs"
 	mwNet "github.com/MiniWeb/Network"
+	mwConst "github.com/MiniWeb/mwConst"
 )
 
 func (self *WebCore) InitHeader() {
@@ -39,53 +42,79 @@ func (self *WebCore) AddPost(Name string, Value string) {
 func (self *WebCore) SendRequest() int {
 	DevLogs.Debug("WebCore.SendRequest")
 	var (
-		NetWork mwNet.TNet
-		Host    string = self.URL.GetHost()
-		Port    string = self.URL.GetPort()
+		Host    string      = self.URL.GetHost()
+		Port    string      = self.URL.GetPort()
+		NetWork *mwNet.TNet = mwNet.NewNet(self.ObjError, self.Proxy)
+		rawDial net.Dialer  = net.Dialer{Timeout: self.TimeOutConnect * time.Second}
+		RawConn net.Conn    = NetWork.StartNetwork(rawDial, Host, Port)
 	)
-	self.ReqHeader.SetHeader("Host", Host)
-	self.RspHeader.ClearHeader()
 
+	// 网络层 startNetwork
+	if RawConn == nil {
+		return self.ObjError.GetErrorCode()
+	}
+
+	// 代理层
+	if self.Proxy.Enable() {
+		/*
+			如果代理启用
+			startNetwork 时替换连接的IP
+		*/
+		switch self.Proxy.GetProxyType() {
+		case mwConst.PROXY_TYPE_HTTP:
+		/*
+			buildReqHeader 修改 HTTP 请求
+		*/
+		case mwConst.PROXY_TYPE_HTTPS:
+			/*
+				CONNECT 连接后, 发送正文或TLS认证
+			*/
+			NetWork.InitProxyHttps(RawConn, mwNet.Host2IP(Host), Port)
+		case mwConst.PROXY_TYPE_SOCKS4:
+			NetWork.InitProxySocks4(RawConn, mwNet.Host2IP(Host), Port)
+		case mwConst.PROXY_TYPE_SOCKS4A:
+			NetWork.InitProxySocks4a(RawConn, Host, Port)
+		case mwConst.PROXY_TYPE_SOCKS5:
+			NetWork.InitProxySocks5(RawConn, Host, Port)
+			//NetWork.InitProxySocks5(RawConn, mwNet.Host2IP(Host), Port)
+		}
+	}
+	if self.ObjError.IsError() {
+		return self.ObjError.GetErrorCode()
+	}
+
+	// 传输层
 	if self.URL.IsTls() {
-		NetWork = &mwNet.NetTls{}
+		NetWork.InitTLS(RawConn)
 	} else {
-		NetWork = &mwNet.NetTCP{}
+		NetWork.InitTCP(RawConn)
 	}
 
-	/*	代理这里添加
-			拦截 Host, Port 重定向到本地
-			本地启动一个代理连接进行代理加载工作
-		Proxy.SetRealAddr(Host, Port)
-		Proxy.SetProxyType(HTTP/HTTPS/SOCKS/Other)
-		Host = "0.0.0.0"
-		Port = "Rand.Port"
-	*/
-	if err := NetWork.Init(Host, Port, self.TimeOutConnect); err != nil {
-		DevLogs.Error("WebCore.SendRequest.ConnectError Error=" + err.Error())
-		return ERROR_CODE_TOC
-	}
-
+	// 网络完毕
 	defer NetWork.Close()
-	// 设置超时
-	NetWork.SetTimeOut(self.TimeOut)
-	tmpBody := self.genReqBody()
-	tmpHead := self.genReqHeader()
-	NetWork.Send(tmpHead)
-	NetWork.Send(tmpBody)
+
+	// 网络通讯
+	self.ReqHeader.SetHeader("Host", Host) // 修正请求信息
+	self.RspHeader.ClearHeader()           // 清空返回信息
+	NetWork.SetTimeOut(self.TimeOut)       // 设置超时
+	tmpBody := self.genReqBody()           // 生成HTTP协议正文
+	tmpHead := self.genReqHeader()         // 生成HTTP协议头
+	NetWork.Send(tmpHead)                  // 发送 请求头
+	NetWork.Send(tmpBody)                  // 发送 请求正文
 
 	self.readRspHeader(NetWork) // Response Header
-	if getErrorCode() != ERROR_CODE_NO_ERROR {
-		return getErrorCode()
+	if self.ObjError.IsError() {
+		return self.ObjError.GetErrorCode()
 	}
 	self.Result = self.readRspBody(NetWork) // Response Body
-	if getErrorCode() != ERROR_CODE_NO_ERROR {
-		return getErrorCode()
+	if self.ObjError.IsError() {
+		return self.ObjError.GetErrorCode()
 	}
 
 	return self.StatusCode
 }
 
-func (self *WebCore) readRspBody(NetWork mwNet.TNet) []byte {
+func (self *WebCore) readRspBody(NetWork *mwNet.TNet) []byte {
 	DevLogs.Debug("WebCore.readRspBody")
 	var (
 		sByte            []byte
@@ -116,6 +145,10 @@ func (self *WebCore) readRspBody(NetWork mwNet.TNet) []byte {
 	if strings.Contains(TransferEncoding, "chunked") {
 		sByte = NetWork.ReadChunk()
 	}
+	// 如果链接被关闭, 读取所有数据
+	if self.RspHeader.HeaderExists("Connection: close") {
+		sByte = append(sByte, NetWork.ReadToEOF()...)
+	}
 
 	if strings.Contains(ContentEncoding, "gzip") {
 		// 一个缓存区压缩的内容
@@ -126,25 +159,19 @@ func (self *WebCore) readRspBody(NetWork mwNet.TNet) []byte {
 		defer flateReader.Close()
 
 		sByte, _ = ioutil.ReadAll(flateReader)
-
 	}
 	//fmt.Println(TransferEncoding)
 	//fmt.Println(ContentEncoding)
+	//fmt.Println(string(sByte))
+	//fmt.Println(fmt.Sprintf("%x", md5.Sum(sByte)))
 	return sByte
 }
 
-func (self *WebCore) readRspHeader(NetWork mwNet.TNet) {
+func (self *WebCore) readRspHeader(NetWork *mwNet.TNet) {
 	DevLogs.Debug("WebCore.readRspHeader")
 	for {
-		Text, err := NetWork.ReadLine()
-		if err != nil {
-			if strings.Contains(err.Error(), "i/o timeout") {
-				setError(ERROR_CODE_READ_TIME, ERROR_MSG_READ_TIME)
-				return
-			}
-			fmt.Println(err)
-			return
-		}
+		Text := NetWork.ReadLine()
+		//fmt.Println(Text)
 		if Text == "\r\n" || Text == "" {
 			break
 		}
@@ -224,14 +251,23 @@ func (self *WebCore) genReqHeader() []byte {
 func (self *WebCore) buildReqHeader() string {
 	DevLogs.Debug("WebCore.buildReqHeader")
 	var (
-		Query string = self.URL.GetEncode()
-		dwRet string
+		Query      string = "?" + self.URL.GetEncode()
+		MethodPath string = fmt.Sprintf("%s%s", self.URL.GetPath(), Query)
+		mpSize     int    = len(MethodPath) - 1
+		dwRet      string
 	)
-	if len(Query) == 0 {
-		dwRet = fmt.Sprintf("%s %s HTTP/1.1", self.Method, self.URL.GetPath())
-	} else {
-		dwRet = fmt.Sprintf("%s %s?%s HTTP/1.1", self.Method, self.URL.GetPath(), Query)
+	if []byte(MethodPath)[mpSize] == '?' {
+		MethodPath = string([]byte(MethodPath)[:mpSize])
 	}
+	/*
+		如果是HTTP代理, 仅修改 GET Script == Get scheme://host:port/Script
+		暂时未考虑 user:pass
+	*/
+	if self.Proxy.GetProxyType() == mwConst.PROXY_TYPE_HTTP {
+		MethodPath = fmt.Sprintf("%s://%s:%s%s", self.URL.GetScheme(), self.URL.GetHost(), self.URL.GetPort(), MethodPath)
+	}
+	dwRet = fmt.Sprintf("%s %s HTTP/1.1", self.Method, MethodPath)
 	dwRet = dwRet + self.ReqHeader.GetAllHeader() + "\r\n\r\n"
+	//fmt.Println(dwRet)
 	return dwRet
 }

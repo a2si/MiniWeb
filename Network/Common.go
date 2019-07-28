@@ -1,14 +1,38 @@
 package Network
 
-import "time"
+import (
+	"bufio"
+	"net"
+	"time"
 
-type TNet interface {
-	Init(Host string, Port string, TimeOut time.Duration) error
-	Close()
-	SetTimeOut(TimeOut time.Duration)
-	Send([]byte) error
+	mwProxy "github.com/MiniWeb/Proxy"
+	mwError "github.com/MiniWeb/mwError"
+)
 
-	ReadLine() (string, error)
-	ReadBytes(Length int) []byte
-	ReadChunk() []byte
+type TNet struct {
+	ObjError *mwError.TError // Error Object
+	Proxy    *mwProxy.TProxy // Proxy Module
+	Conn     net.Conn
+	ioRead   *bufio.Reader
+	timeOut  time.Duration
+	isClosed bool
+}
+
+func NewNet(errObj *mwError.TError, p *mwProxy.TProxy) *TNet {
+	Obj := &TNet{
+		ObjError: errObj,
+		Proxy:    p,
+		timeOut:  0,
+		isClosed: false,
+	}
+	return Obj
+}
+
+func Host2IP(Host string) string {
+	str, _ := net.LookupHost(Host)
+	if len(str) > 1 {
+		return str[0]
+	}
+	//fmt.Println(err)
+	return ""
 }

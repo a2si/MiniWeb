@@ -1,0 +1,34 @@
+package mwConst
+
+const (
+	ERROR_NO_ERROR            = iota
+	ERROR_SOCKET_REMOTE_CLOSE = iota
+	ERROR_SOCKET_CONNECT_TIMEOUT
+	ERROR_SOCKET_READ_TIMEOUT
+
+	ERROR_PROXY_503
+	/*
+		socks4, socks4a, socks5
+		拒绝请求, 以及其他
+	*/
+	ERROR_PROXY_NO_SUPPORT
+	ERROR_PROXY_AUTH_FAIL
+	ERROR_PROXY_OTHER_ERROR
+	
+
+	ERROR_CODE_NO_ERROR
+	ERROR_CODE_TOC
+	ERROR_CODE_READ_TIME
+	ERROR_CODE_CONN_REFUSED
+	ERROR_CODE_CONN_NO_ROUTE
+	ERROR_CODE_NETWORK_NO_START
+)
+
+const (
+	ERROR_MSG_NO_ERROR         = ""
+	ERROR_MSG_TOC              = "Connect Time Out"
+	ERROR_MSG_READ_TIME        = "Read Time Out"
+	ERROR_MSG_CONN_REFUSED     = "connection refused"
+	ERROR_MSG_CONN_NO_ROUTE    = "no route to host"
+	ERROR_MSG_NETWORK_NO_START = "network not start"
+)

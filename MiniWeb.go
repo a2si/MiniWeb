@@ -7,6 +7,7 @@ import (
 	mwCookie "github.com/MiniWeb/Cookie"
 	DevLogs "github.com/MiniWeb/DevLogs"
 	mwHeader "github.com/MiniWeb/Header"
+	mwProxy "github.com/MiniWeb/Proxy"
 )
 
 func (self *miniWeb) initMiniWebClient() {
@@ -18,16 +19,24 @@ func (self *miniWeb) initMiniWebClient() {
 
 }
 
+// 暴露接口
 func (self *miniWeb) Cookie() *mwCookie.Cookie {
 	return self.prv_Core.Cookie
 }
 
+// 暴露接口
 func (self *miniWeb) ReqHeader() *mwHeader.Header {
 	return self.prv_Core.ReqHeader
 }
 
+// 暴露接口
 func (self *miniWeb) RspHeader() *mwHeader.Header {
 	return self.prv_Core.RspHeader
+}
+
+// 暴露接口
+func (self *miniWeb) Proxy() *mwProxy.TProxy {
+	return self.prv_Core.Proxy
 }
 
 // 正常模式
@@ -132,12 +141,20 @@ func (self *miniWeb) SetPOSTFile(Name string, FileName string) {
 	self.prv_Core.AddPost("@"+Name, FileName)
 }
 
-func (self *miniWeb) GetErrorMsg() {
-
+func (self *miniWeb) SetErrorMsg(Msg string) {
+	self.prv_Error.SetErrorMsg(Msg)
 }
 
-func (self *miniWeb) GetErrorCode() {
+func (self *miniWeb) GetErrorMsg() string {
+	return self.prv_Error.GetErrorMsg()
+}
 
+func (self *miniWeb) SetErrorCode(Code int) {
+	self.prv_Error.SetErrorCode(Code)
+}
+
+func (self *miniWeb) GetErrorCode() int {
+	return self.prv_Error.GetErrorCode()
 }
 
 func (self *miniWeb) GetStatusCode() int {
