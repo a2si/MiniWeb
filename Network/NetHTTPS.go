@@ -1,7 +1,6 @@
 package Network
 
 import (
-	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -11,13 +10,11 @@ import (
 
 func (self *TNet) genHttpProxyReqHeader(Host string, Port string) string {
 	var (
-		Header      string = fmt.Sprintf("CONNECT %s:%s HTTP/1.1\r\n", Host, Port)
-		pUser, pPwd string = self.Proxy.GetProxyUserPwd()
+		Header     string = fmt.Sprintf("CONNECT %s:%s HTTP/1.1\r\n", Host, Port)
+		AuthBase64 string = self.Proxy.GetBase64Authorization()
 	)
-
-	if len(pUser) != 0 {
-		str := base64.StdEncoding.EncodeToString([]byte(pUser + ":" + pPwd))
-		Header = fmt.Sprintf("%sProxy-Authorization:Basic %s\r\n", Header, str)
+	if len(AuthBase64) != 0 {
+		Header = fmt.Sprintf("%sProxy-Authorization:Basic %s\r\n", Header, AuthBase64)
 	}
 	//Header = fmt.Sprintf("%sProxy-Connection: Keep-Alive\r\n", Header)
 	Header = fmt.Sprintf("%s\r\n", Header)

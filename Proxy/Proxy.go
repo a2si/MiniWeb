@@ -1,6 +1,8 @@
 package Proxy
 
 import (
+	"encoding/base64"
+
 	mwConst "github.com/a2si/MiniWeb/mwConst"
 )
 
@@ -36,4 +38,11 @@ func (self *TProxy) SetProxyUserPwd(User string, Password string) {
 
 func (self *TProxy) GetProxyUserPwd() (string, string) {
 	return self.prv_UserName, self.prv_Password
+}
+
+func (self *TProxy) GetBase64Authorization() string {
+	if len(self.prv_UserName) == 0 {
+		return ""
+	}
+	return base64.StdEncoding.EncodeToString([]byte(self.prv_UserName + ":" + self.prv_Password))
 }

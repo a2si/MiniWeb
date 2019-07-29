@@ -39,6 +39,16 @@ func (self *WebCore) AddPost(Name string, Value string) {
 	self.PostData[Name] = Value
 }
 
+func (self *WebCore) havePostFile() bool {
+	DevLogs.Debug("WebCore.havePostFile")
+	for k, _ := range self.PostData {
+		if string([]byte(k)[:1]) == "@" {
+			return true
+		}
+	}
+	return false
+}
+
 func (self *WebCore) SendRequest() int {
 	DevLogs.Debug("WebCore.SendRequest")
 	var (
@@ -232,16 +242,6 @@ func (self *WebCore) genReqBody() []byte {
 	return tempBody
 }
 
-func (self *WebCore) havePostFile() bool {
-	DevLogs.Debug("WebCore.havePostFile")
-	for k, _ := range self.PostData {
-		if string([]byte(k)[:1]) == "@" {
-			return true
-		}
-	}
-	return false
-}
-
 func (self *WebCore) genReqHeader() []byte {
 	DevLogs.Debug("WebCore.genReqHeader")
 	Header := self.buildReqHeader()
@@ -251,6 +251,7 @@ func (self *WebCore) genReqHeader() []byte {
 func (self *WebCore) buildReqHeader() string {
 	DevLogs.Debug("WebCore.buildReqHeader")
 	var (
+		// URL.GetEncode() 不要用库自带的, 因为库中分隔是 &; 而不是 &
 		Query      string = "?" + self.URL.GetEncode()
 		MethodPath string = fmt.Sprintf("%s%s", self.URL.GetPath(), Query)
 		mpSize     int    = len(MethodPath) - 1
@@ -261,13 +262,25 @@ func (self *WebCore) buildReqHeader() string {
 	}
 	/*
 		如果是HTTP代理, 仅修改 GET Script == Get scheme://host:port/Script
-		暂时未考虑 user:pass
+		同时, 如果有帐号密码, 设置 Proxy-Authorization
 	*/
 	if self.Proxy.GetProxyType() == mwConst.PROXY_TYPE_HTTP {
 		MethodPath = fmt.Sprintf("%s://%s:%s%s", self.URL.GetScheme(), self.URL.GetHost(), self.URL.GetPort(), MethodPath)
+		AuthBase64 := self.Proxy.GetBase64Authorization()
+		if len(AuthBase64) > 0 {
+			self.ReqHeader.SetHeader("Proxy-Authorization", AuthBase64)
+		}
 	}
+	/*
+		很有趣的请求
+			GET xxx HTTP/1.1
+			Cookie: cookies
+			Header 因为GO的MAP机制, 这里是乱序的
+	*/
 	dwRet = fmt.Sprintf("%s %s HTTP/1.1", self.Method, MethodPath)
+	dwRet = fmt.Sprintf("%s\r\nCookie: %s\r\n", dwRet, self.Cookie.GetAllCookie())
 	dwRet = fmt.Sprintf("%s\r\n%s\r\n", dwRet, self.ReqHeader.GetAllHeader())
+
 	//fmt.Println(dwRet)
 	return dwRet
 }
