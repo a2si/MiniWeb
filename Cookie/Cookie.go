@@ -33,14 +33,16 @@ func NewCookie(errObj *mwError.TError) *Cookie {
 }
 
 func (self *Cookie) SetURL(URL string) {
+	if len(URL) == 0 {
+		return
+	}
 	self.prv_BaseURI = URL
-	Spr := string(os.PathSeparator)
+	Spr := string(os.PathSeparator) // linux=/ windows=\\
 	self.ckFile = fmt.Sprintf("%s%s%s.cookie", self.prv_CookieDir, Spr, URL)
 	self.LoadCookie()
 }
 
 func (self *Cookie) SetSaveCookie(IsSave bool) {
-	//Config.Set("MiniWeb", "SaveCookie", IsSave)
 	self.bSaveCookie = IsSave
 }
 
@@ -48,9 +50,9 @@ func (self *Cookie) GetSaveCookie() bool {
 	return self.bSaveCookie
 }
 
-func (self *Cookie) SetCookieDir(CookieDir string) {
+func (self *Cookie) SetCookieDir(CookieDir string, Automkdir bool) {
 	self.prv_CookieDir = CookieDir
-	if !mwCommon.DirExists(CookieDir) {
+	if Automkdir == true && !mwCommon.DirExists(CookieDir) {
 		os.MkdirAll(CookieDir, 0777)
 	}
 }
@@ -63,10 +65,12 @@ func (self *Cookie) Count() int {
 	return len(self.prv_Cookie)
 }
 
+// Cookie Name 区分大小写, 查了一下RFC, 没有明确规定
 func (self *Cookie) SetCookie(CookieName string, CookieValue string) {
 	self.prv_Cookie[CookieName] = CookieValue
 }
 
+// COOKIE 不存在则返回 ""
 func (self *Cookie) GetCookie(CookieName string) string {
 	return self.prv_Cookie[CookieName]
 }
@@ -89,6 +93,9 @@ func (self *Cookie) Dump() {
 func (self *Cookie) LoadCookie() {
 	self.Clear()
 	if self.bSaveCookie {
+		if mwCommon.DirExists(self.prv_CookieDir) == false {
+			return
+		}
 		if mwCommon.FileExists(self.ckFile) && !mwCommon.DirExists(self.ckFile) {
 			info, err := ioutil.ReadFile(self.ckFile)
 			if err == nil {
@@ -101,6 +108,9 @@ func (self *Cookie) LoadCookie() {
 
 func (self *Cookie) SaveCookie() {
 	if self.bSaveCookie {
+		if mwCommon.DirExists(self.prv_CookieDir) == false {
+			return
+		}
 		if len(self.ckFile) > 0 && !mwCommon.DirExists(self.ckFile) {
 			if mwCommon.FileExists(self.ckFile) {
 				os.Remove(self.ckFile)
@@ -112,6 +122,9 @@ func (self *Cookie) SaveCookie() {
 }
 
 func (self *Cookie) RemoveSaveCookie() {
+	if mwCommon.DirExists(self.prv_CookieDir) == false {
+		return
+	}
 	self.prv_Cookie = make(map[string]string)
 	if mwCommon.FileExists(self.ckFile) && !mwCommon.DirExists(self.ckFile) {
 		os.Remove(self.ckFile)

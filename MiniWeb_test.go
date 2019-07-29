@@ -5,7 +5,9 @@ import (
 )
 
 func TestMain(t *testing.T) {
-	Config.LogsEnable(false)
+	Config.EnableLogs = false
+	Config.ReConfig()
+
 	w := NewMiniWeb()
 	w.GetWebCode("http://www.baidu.com/robots.txt")
 	t.Log("HTTP.Recv: ", len(w.ResponseText()))

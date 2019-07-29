@@ -10,6 +10,7 @@ import (
 	mwProxy "github.com/a2si/MiniWeb/Proxy"
 	mwURL "github.com/a2si/MiniWeb/UrlExtend"
 	mwUserAgent "github.com/a2si/MiniWeb/UserAgent"
+	mwConfig "github.com/a2si/MiniWeb/mwConfig"
 	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
@@ -22,21 +23,16 @@ const (
 
 type miniWeb struct {
 	prv_Core  *mwCore.WebCore
-	prv_Byte  []byte
 	prv_Error *mwError.TError
-}
-
-type tsConfig struct {
+	prv_Byte  []byte
 }
 
 var (
-	Config           *tsConfig
-	cfgRandUserAgent bool = true
-	cfgLogsEnable    bool = true
+	Config *mwConfig.TConfig
 )
 
 func init() {
-	Config = &tsConfig{}
+	Config = mwConfig.NewConfig()
 }
 
 func NewMiniWeb() *miniWeb {
@@ -59,7 +55,7 @@ func NewMiniWeb() *miniWeb {
 		RspHeader:      mwHeader.NewHeader(Obj.prv_Error),
 		Proxy:          mwProxy.NewProxy(Obj.prv_Error),
 	}
-	if cfgRandUserAgent {
+	if Config.RandUserAgent {
 		Obj.prv_Core.UserAgent = mwUserAgent.NewUserAgent().Random()
 	}
 	Obj.initMiniWebClient()

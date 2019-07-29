@@ -5,10 +5,103 @@ import (
 	"time"
 
 	mwCookie "github.com/a2si/MiniWeb/Cookie"
+	mwCore "github.com/a2si/MiniWeb/Core"
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 	mwHeader "github.com/a2si/MiniWeb/Header"
 	mwProxy "github.com/a2si/MiniWeb/Proxy"
+	mwURL "github.com/a2si/MiniWeb/UrlExtend"
+	mwUserAgent "github.com/a2si/MiniWeb/UserAgent"
+	mwConfig "github.com/a2si/MiniWeb/mwConfig"
+	mwError "github.com/a2si/MiniWeb/mwError"
 )
+
+type (
+	miniWeb struct {
+		prv_Core  *mwCore.WebCore
+		prv_Error *mwError.TError
+		prv_Byte  []byte
+	}
+	iMiniWeb interface {
+		Cookie() *mwCookie.Cookie                       // Cookie 模块
+		ReqHeader() *mwHeader.Header                    // 请求HTTP头部
+		RspHeader() *mwHeader.Header                    // 响应HTTP头部
+		Proxy() *mwProxy.TProxy                         // 代理模块
+		IsClient()                                      // 正常模式
+		IsXMLHttp()                                     // 模拟XML UA
+		IsWeiXin()                                      // 模拟微UA
+		SetURL(URL string)                              // 设置访问地址
+		SetHttpMethod(Method string)                    // 设置请求协议
+		SetReferer(Referer string)                      // 设置请求来源
+		GetReferer() string                             // 取得设定访问来源
+		SetUserAgent(UserAgent string)                  // 设置UA
+		GetUserAgent() string                           // 获取当前UA
+		SetRedirect(Redirect bool)                      // 设置是否自动转向 如302
+		GetRedirect() bool                              // 读取转向设置
+		SetTimeOut(TimeOut time.Duration)               // 设置R/W超时
+		GetTimeOut() time.Duration                      // 取得R/W超时设置
+		SetTimeOutConnect(TimeOutConnect time.Duration) // 设置连接超时
+		GetTimeOutConnect() time.Duration               // 获取连接超时设定
+		SetPOST(data map[string]string)                 // POST 上传数据
+		SetPOSTFile(Name string, FileName string)       // POST 上传文件
+		SetErrorMsg(Msg string)                         // 设置错误信息
+		GetErrorMsg() string                            // 读取错误信息
+		SetErrorCode(Code int)                          // 设置错误代码
+		GetErrorCode() int                              // 读取错误代码
+		GetStatusCode() int                             // 读取状态码
+		GetWebCode(URL string) int                      // 访问网页
+		SendRequest(URL string) int                     // 访问网页 同上
+		ResponseText() string                           // 返回页面字符串数据
+		ResponseByte() []byte                           // 返回页面字节流数据
+	}
+)
+
+const (
+	prv_MINI_WEB_VERSION        string        = "3.1.3" // MiniWeb 版本
+	prv_MW_TIME_OUT             time.Duration = 30      // 传输超时
+	prv_MW_TIME_OUT_CONNECT     time.Duration = 50      // 连接超时
+	prv_MINI_WEB_USERAGENT      string        = "MiniWeb V" + prv_MINI_WEB_VERSION
+	prv_MW_COOKIE_DIR           string        = "Cookie" // Cookie 存储路径
+	prv_MW_COOKIE_DIR_AUTO_MAKE bool          = false    // Cookie 存储路径自动创建
+	prv_MW_COOKIE_SAVE          bool          = false    // Cookie 自动保存
+)
+
+var (
+	Config *mwConfig.TConfig
+)
+
+func init() {
+	Config = mwConfig.NewConfig()
+}
+
+func NewMiniWeb() *miniWeb {
+	DevLogs.Debug("Package.NewMiniWeb")
+	self := &miniWeb{
+		prv_Error: mwError.NewError(),
+	}
+	self.prv_Core = &mwCore.WebCore{
+		ObjError:       self.prv_Error,
+		Method:         "GET",
+		Referer:        "",
+		UserAgent:      prv_MINI_WEB_USERAGENT,
+		Redirect:       false,
+		TimeOut:        prv_MW_TIME_OUT,
+		TimeOutConnect: prv_MW_TIME_OUT_CONNECT,
+		PostData:       make(map[string]string),
+		URL:            mwURL.NewUrl(self.prv_Error),
+		Cookie:         mwCookie.NewCookie(self.prv_Error),
+		ReqHeader:      mwHeader.NewHeader(self.prv_Error),
+		RspHeader:      mwHeader.NewHeader(self.prv_Error),
+		Proxy:          mwProxy.NewProxy(self.prv_Error),
+	}
+
+	self.prv_Core.Cookie.SetSaveCookie(prv_MW_COOKIE_SAVE)
+	self.prv_Core.Cookie.SetCookieDir(prv_MW_COOKIE_DIR, prv_MW_COOKIE_DIR_AUTO_MAKE)
+	if Config.RandUserAgent {
+		self.prv_Core.UserAgent = mwUserAgent.NewUserAgent().Random()
+	}
+	self.initMiniWebClient()
+	return self
+}
 
 func (self *miniWeb) initMiniWebClient() {
 	DevLogs.Debug("MiniWeb.initMiniWebClient")
@@ -63,6 +156,7 @@ func (self *miniWeb) SetURL(URL string) {
 	DevLogs.Debug("MiniWeb.SetURL")
 	if len(URL) > 0 {
 		self.prv_Core.URL.SetUrl(URL)
+		self.Cookie().SetURL(self.prv_Core.URL.GetHost())
 	}
 }
 
@@ -163,10 +257,13 @@ func (self *miniWeb) GetStatusCode() int {
 
 func (self *miniWeb) GetWebCode(URL string) int {
 	DevLogs.Debug("MiniWeb.GetWebCode")
+	return self.GetWebCode(URL)
+}
 
-	if len(URL) > 0 {
-		self.prv_Core.URL.SetUrl(URL)
-	}
+func (self *miniWeb) SendRequest(URL string) int {
+	DevLogs.Debug("MiniWeb.SendRequest")
+
+	self.SetURL(URL)
 	dwCode := self.prv_Core.SendRequest()
 	self.SetHttpMethod("GET")
 	return dwCode
