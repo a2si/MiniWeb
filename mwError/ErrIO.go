@@ -1,12 +1,19 @@
 package mwError
 
-func (self *TError) SocketReadTimeout() {
-	self.prv_ErrCode = ERROR_SOCKET_READ_TIMEOUT
-	self.prv_ErrMsg = "read: i/o timeout"
+import (
+	"fmt"
+	"strings"
+)
+
+func (self *TError) IOReadByNegative() {
+	self.prv_ErrCode = ERR_IO_READ_BY_NEGATIVE
+	self.prv_ErrMsg = MsgIOReadByNegative
 }
 
-//read: connection reset by peer
-func (self *TError) SocketReadReset() {
-	self.prv_ErrCode = ERROR_SOCKET_REMOTE_CLOSE
-	self.prv_ErrMsg = "read: connection reset by peer"
+func (self *TError) SetIOError(err error) {
+	str := err.Error()
+	fmt.Println(err)
+	if strings.Contains(str, "read: connection refused") {
+		return
+	}
 }

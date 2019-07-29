@@ -1,4 +1,4 @@
-package Network
+package mwNet
 
 import (
 	"crypto/tls"
@@ -8,20 +8,14 @@ import (
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
-func (self *TNet) InitTCP(conn net.Conn) {
-	DevLogs.Debug("TNet.InitTCP")
-	self.Conn = conn
-	self.netIO2BufferIO()
-}
-
 func (self *TNet) InitTLS(conn net.Conn) {
 	DevLogs.Debug("TNet.InitTLS")
 	TlsConfig := &tls.Config{
 		InsecureSkipVerify: true,
 	}
-	c := TlsConfig.Clone()
-	c.ServerName = "www.baidu.com"
-	TlsConfig = c
+	//c := TlsConfig.Clone()
+	//c.ServerName = "www.baidu.com"
+	//TlsConfig = c
 
 	TlsConn := tls.Client(conn, TlsConfig)
 	err := TlsConn.Handshake()
@@ -32,4 +26,20 @@ func (self *TNet) InitTLS(conn net.Conn) {
 	}
 	self.Conn = TlsConn
 	self.netIO2BufferIO()
+}
+
+func (self *TNet) ReadLine() string {
+	return self.ioRead.ReadLine()
+}
+
+func (self *TNet) ReadBytes(Length int) []byte {
+	return self.ioRead.ReadBytes(Length)
+}
+
+func (self *TNet) ReadToEOF() []byte {
+	return self.ioRead.ReadToEOF()
+}
+
+func (self *TNet) ReadChunk() []byte {
+	return self.ioRead.ReadChunk()
 }

@@ -1,4 +1,4 @@
-package Network
+package mwNet
 
 import (
 	"fmt"
@@ -40,6 +40,8 @@ func (self *TNet) httpProxyRspHeader() (string, string) {
 		if Text == "\r\n" || Text == "" {
 			return MsgCode, MsgInfo
 		}
+		if self.ObjError.IsError() {
+			return MsgCode, MsgInfo
+		}
 	}
-	return MsgCode, MsgInfo
 }

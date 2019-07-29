@@ -16,7 +16,7 @@ import (
 )
 
 type (
-	miniWeb struct {
+	TMiniWeb struct {
 		prv_Core  *mwCore.WebCore
 		prv_Error *mwError.TError
 		prv_Byte  []byte
@@ -65,17 +65,13 @@ const (
 	prv_MW_COOKIE_SAVE          bool          = false    // Cookie 自动保存
 )
 
-var (
-	Config *mwConfig.TConfig
-)
-
 func init() {
-	Config = mwConfig.NewConfig()
+	mwConfig.ConfigInit()
 }
 
-func NewMiniWeb() *miniWeb {
+func NewMiniWeb() *TMiniWeb {
 	DevLogs.Debug("Package.NewMiniWeb")
-	self := &miniWeb{
+	self := &TMiniWeb{
 		prv_Error: mwError.NewError(),
 	}
 	self.prv_Core = &mwCore.WebCore{
@@ -96,14 +92,14 @@ func NewMiniWeb() *miniWeb {
 
 	self.prv_Core.Cookie.SetSaveCookie(prv_MW_COOKIE_SAVE)
 	self.prv_Core.Cookie.SetCookieDir(prv_MW_COOKIE_DIR, prv_MW_COOKIE_DIR_AUTO_MAKE)
-	if Config.RandUserAgent {
+	if mwConfig.GetConfig("UserAgent.Rand") {
 		self.prv_Core.UserAgent = mwUserAgent.NewUserAgent().Random()
 	}
 	self.initMiniWebClient()
 	return self
 }
 
-func (self *miniWeb) initMiniWebClient() {
+func (self *TMiniWeb) initMiniWebClient() {
 	DevLogs.Debug("MiniWeb.initMiniWebClient")
 	self.prv_Core.Cookie.Clear()
 	self.prv_Core.ReqHeader.ClearHeader()
@@ -113,46 +109,46 @@ func (self *miniWeb) initMiniWebClient() {
 }
 
 // 暴露接口
-func (self *miniWeb) Cookie() *mwCookie.Cookie {
+func (self *TMiniWeb) Cookie() *mwCookie.Cookie {
 	return self.prv_Core.Cookie
 }
 
 // 暴露接口
-func (self *miniWeb) ReqHeader() *mwHeader.Header {
+func (self *TMiniWeb) ReqHeader() *mwHeader.Header {
 	return self.prv_Core.ReqHeader
 }
 
 // 暴露接口
-func (self *miniWeb) RspHeader() *mwHeader.Header {
+func (self *TMiniWeb) RspHeader() *mwHeader.Header {
 	return self.prv_Core.RspHeader
 }
 
 // 暴露接口
-func (self *miniWeb) Proxy() *mwProxy.TProxy {
+func (self *TMiniWeb) Proxy() *mwProxy.TProxy {
 	return self.prv_Core.Proxy
 }
 
 // 正常模式
-func (self *miniWeb) IsClient() {
+func (self *TMiniWeb) IsClient() {
 	DevLogs.Debug("MiniWeb.IsClient")
 	self.prv_Core.ReqHeader.RemoveHeader("X-Requested-With")
 	self.prv_Core.ReqHeader.SetHeader("User-Agent", self.prv_Core.UserAgent)
 }
 
 // XML HTTP 模式
-func (self *miniWeb) IsXMLHttp() {
+func (self *TMiniWeb) IsXMLHttp() {
 	DevLogs.Debug("MiniWeb.IsXMLHttp")
 	self.prv_Core.ReqHeader.SetHeader("X-Requested-With", "XMLHttpRequest")
 }
 
 // 微信客户端模块
-func (self *miniWeb) IsWeiXin() {
+func (self *TMiniWeb) IsWeiXin() {
 	DevLogs.Debug("MiniWeb.IsWeiXin")
 	self.prv_Core.ReqHeader.RemoveHeader("X-Requested-With")
 	self.prv_Core.ReqHeader.SetHeader("User-Agent", "MicroMessenger")
 }
 
-func (self *miniWeb) SetURL(URL string) {
+func (self *TMiniWeb) SetURL(URL string) {
 	DevLogs.Debug("MiniWeb.SetURL")
 	if len(URL) > 0 {
 		self.prv_Core.URL.SetUrl(URL)
@@ -160,63 +156,63 @@ func (self *miniWeb) SetURL(URL string) {
 	}
 }
 
-func (self *miniWeb) SetHttpMethod(Method string) {
+func (self *TMiniWeb) SetHttpMethod(Method string) {
 	DevLogs.Debug("MiniWeb.SetHttpMethod")
 	self.prv_Core.SetMethod(Method)
 }
 
-func (self *miniWeb) SetReferer(Referer string) {
+func (self *TMiniWeb) SetReferer(Referer string) {
 	DevLogs.Debug("MiniWeb.SetReferer Referer=" + Referer)
 	self.prv_Core.Referer = Referer
 }
 
-func (self *miniWeb) GetReferer() string {
+func (self *TMiniWeb) GetReferer() string {
 	DevLogs.Debug("MiniWeb.GetReferer")
 	return self.prv_Core.Referer
 }
 
-func (self *miniWeb) SetUserAgent(UserAgent string) {
+func (self *TMiniWeb) SetUserAgent(UserAgent string) {
 	DevLogs.Debug("MiniWeb.SetUserAgent: UserAgent=" + UserAgent)
 	self.prv_Core.UserAgent = UserAgent
 }
 
-func (self *miniWeb) GetUserAgent() string {
+func (self *TMiniWeb) GetUserAgent() string {
 	DevLogs.Debug("MiniWeb.GetUserAgent")
 	return self.prv_Core.UserAgent
 }
 
-func (self *miniWeb) SetRedirect(Redirect bool) {
+func (self *TMiniWeb) SetRedirect(Redirect bool) {
 	DevLogs.Debug("MiniWeb.SetRedirect")
 	self.prv_Core.Redirect = Redirect
 }
 
-func (self *miniWeb) GetRedirect() bool {
+func (self *TMiniWeb) GetRedirect() bool {
 	DevLogs.Debug("MiniWeb.GetRedirect")
 	return self.prv_Core.Redirect
 }
 
-func (self *miniWeb) SetTimeOut(TimeOut time.Duration) {
+func (self *TMiniWeb) SetTimeOut(TimeOut time.Duration) {
 	DevLogs.Debug("MiniWeb.SetTimeOut")
 	self.prv_Core.TimeOut = TimeOut
 }
 
-func (self *miniWeb) GetTimeOut() time.Duration {
+func (self *TMiniWeb) GetTimeOut() time.Duration {
 	DevLogs.Debug("MiniWeb.GetTimeOut")
 	return self.prv_Core.TimeOut
 }
 
-func (self *miniWeb) SetTimeOutConnect(TimeOutConnect time.Duration) {
+func (self *TMiniWeb) SetTimeOutConnect(TimeOutConnect time.Duration) {
 	DevLogs.Debug("MiniWeb.SetTimeOutConnect")
 	self.prv_Core.TimeOutConnect = TimeOutConnect
 }
 
-func (self *miniWeb) GetTimeOutConnect() time.Duration {
+func (self *TMiniWeb) GetTimeOutConnect() time.Duration {
 	DevLogs.Debug("MiniWeb.GetTimeOutConnect")
 	return self.prv_Core.TimeOutConnect
 }
 
 // MAP 方法, 数据顺序会改变
-func (self *miniWeb) SetPOST(data map[string]string) {
+func (self *TMiniWeb) SetPOST(data map[string]string) {
 	DevLogs.Debug("MiniWeb.SetPOST")
 	self.SetHttpMethod("POST")
 	for k, v := range data {
@@ -229,38 +225,38 @@ func (self *miniWeb) SetPOST(data map[string]string) {
 	}
 }
 
-func (self *miniWeb) SetPOSTFile(Name string, FileName string) {
+func (self *TMiniWeb) SetPOSTFile(Name string, FileName string) {
 	DevLogs.Debug("MiniWeb.SetPOSTFile")
 	self.SetHttpMethod("POST")
 	self.prv_Core.AddPost("@"+Name, FileName)
 }
 
-func (self *miniWeb) SetErrorMsg(Msg string) {
+func (self *TMiniWeb) SetErrorMsg(Msg string) {
 	self.prv_Error.SetErrorMsg(Msg)
 }
 
-func (self *miniWeb) GetErrorMsg() string {
+func (self *TMiniWeb) GetErrorMsg() string {
 	return self.prv_Error.GetErrorMsg()
 }
 
-func (self *miniWeb) SetErrorCode(Code int) {
+func (self *TMiniWeb) SetErrorCode(Code int) {
 	self.prv_Error.SetErrorCode(Code)
 }
 
-func (self *miniWeb) GetErrorCode() int {
+func (self *TMiniWeb) GetErrorCode() int {
 	return self.prv_Error.GetErrorCode()
 }
 
-func (self *miniWeb) GetStatusCode() int {
+func (self *TMiniWeb) GetStatusCode() int {
 	return self.prv_Core.StatusCode
 }
 
-func (self *miniWeb) GetWebCode(URL string) int {
+func (self *TMiniWeb) GetWebCode(URL string) int {
 	DevLogs.Debug("MiniWeb.GetWebCode")
-	return self.GetWebCode(URL)
+	return self.SendRequest(URL)
 }
 
-func (self *miniWeb) SendRequest(URL string) int {
+func (self *TMiniWeb) SendRequest(URL string) int {
 	DevLogs.Debug("MiniWeb.SendRequest")
 
 	self.SetURL(URL)
@@ -269,12 +265,12 @@ func (self *miniWeb) SendRequest(URL string) int {
 	return dwCode
 }
 
-func (self *miniWeb) ResponseText() string {
+func (self *TMiniWeb) ResponseText() string {
 	DevLogs.Debug("MiniWeb.ResponseText")
 	return string(self.prv_Core.Result)
 }
 
-func (self *miniWeb) ResponseByte() []byte {
+func (self *TMiniWeb) ResponseByte() []byte {
 	DevLogs.Debug("MiniWeb.ResponseByte")
 	return self.prv_Core.Result
 

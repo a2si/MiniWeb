@@ -14,8 +14,8 @@ import (
 
 	mwCommon "github.com/a2si/MiniWeb/Common"
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
-	mwNet "github.com/a2si/MiniWeb/Network"
 	mwConst "github.com/a2si/MiniWeb/mwConst"
+	mwNet "github.com/a2si/MiniWeb/mwNet"
 )
 
 func (self *WebCore) InitHeader() {
@@ -58,50 +58,15 @@ func (self *WebCore) SendRequest() int {
 		rawDial net.Dialer  = net.Dialer{Timeout: self.TimeOutConnect * time.Second}
 		RawConn net.Conn    = NetWork.StartNetwork(rawDial, Host, Port)
 	)
-
-	// 网络层 startNetwork
 	if RawConn == nil {
 		return self.ObjError.GetErrorCode()
 	}
+	defer NetWork.Close()
 
-	// 代理层
-	if self.Proxy.Enable() {
-		/*
-			如果代理启用
-			startNetwork 时替换连接的IP
-		*/
-		switch self.Proxy.GetProxyType() {
-		case mwConst.PROXY_TYPE_HTTP:
-		/*
-			buildReqHeader 修改 HTTP 请求
-		*/
-		case mwConst.PROXY_TYPE_HTTPS:
-			/*
-				CONNECT 连接后, 发送正文或TLS认证
-			*/
-			NetWork.InitProxyHttps(RawConn, mwNet.Host2IP(Host), Port)
-		case mwConst.PROXY_TYPE_SOCKS4:
-			NetWork.InitProxySocks4(RawConn, mwNet.Host2IP(Host), Port)
-		case mwConst.PROXY_TYPE_SOCKS4A:
-			NetWork.InitProxySocks4a(RawConn, Host, Port)
-		case mwConst.PROXY_TYPE_SOCKS5:
-			NetWork.InitProxySocks5(RawConn, Host, Port)
-			//NetWork.InitProxySocks5(RawConn, mwNet.Host2IP(Host), Port)
-		}
-	}
-	if self.ObjError.IsError() {
-		return self.ObjError.GetErrorCode()
-	}
-
-	// 传输层
+	// SSL传输层
 	if self.URL.IsTls() {
 		NetWork.InitTLS(RawConn)
-	} else {
-		NetWork.InitTCP(RawConn)
 	}
-
-	// 网络完毕
-	defer NetWork.Close()
 
 	// 网络通讯
 	self.ReqHeader.SetHeader("Host", Host) // 修正请求信息
@@ -109,8 +74,8 @@ func (self *WebCore) SendRequest() int {
 	NetWork.SetTimeOut(self.TimeOut)       // 设置超时
 	tmpBody := self.genReqBody()           // 生成HTTP协议正文
 	tmpHead := self.genReqHeader()         // 生成HTTP协议头
-	NetWork.Send(tmpHead)                  // 发送 请求头
-	NetWork.Send(tmpBody)                  // 发送 请求正文
+	NetWork.SendPacket(tmpHead)            // 发送 请求头
+	NetWork.SendPacket(tmpBody)            // 发送 请求正文
 
 	self.readRspHeader(NetWork) // Response Header
 	if self.ObjError.IsError() {
@@ -181,7 +146,7 @@ func (self *WebCore) readRspHeader(NetWork *mwNet.TNet) {
 	DevLogs.Debug("WebCore.readRspHeader")
 	for {
 		Text := NetWork.ReadLine()
-		//fmt.Println(Text)
+		fmt.Println(Text)
 		if Text == "\r\n" || Text == "" {
 			break
 		}

@@ -1,33 +1,33 @@
 package mwError
 
 const (
-	ERROR_NO_ERROR            = iota
-	ERROR_SOCKET_REMOTE_CLOSE = iota
-	ERROR_SOCKET_CONNECT_TIMEOUT
-	ERROR_SOCKET_READ_TIMEOUT
+	ERROR_NO_ERROR = iota
 
-	ERROR_PROXY_503
-	/*
-		socks4, socks4a, socks5
-		拒绝请求, 以及其他
-	*/
-	ERROR_PROXY_NO_SUPPORT
-	ERROR_PROXY_AUTH_FAIL
-	ERROR_PROXY_OTHER_ERROR
+	ERR_NOW_NO_SUPPORT
 
-	ERROR_CODE_NO_ERROR
-	ERROR_CODE_TOC
-	ERROR_CODE_READ_TIME
-	ERROR_CODE_CONN_REFUSED
-	ERROR_CODE_CONN_NO_ROUTE
-	ERROR_CODE_NETWORK_NO_START
+	ERR_NETWORK_CONNECT_FAIL
+	ERR_NETWORK_TIMEOUT
+	ERR_NETWORK_NOT_CONNECT
+
+	ERR_PROXY_NOT_SETTINGS
+	ERR_PROXY_MANY_CONNECTIONS
+	ERR_PROXY_SOCKS_IDENTD
+	ERR_PROXY_REFUSED_FAIL
+	ERR_PROXY_ACCOUNT_AUTH_FAIL
+
+	ERR_IO_READ_BY_NEGATIVE
+	ERR_IO_TIMEOUT
 )
 
-const (
-	ERROR_MSG_NO_ERROR         = ""
-	ERROR_MSG_TOC              = "Connect Time Out"
-	ERROR_MSG_READ_TIME        = "Read Time Out"
-	ERROR_MSG_CONN_REFUSED     = "connection refused"
-	ERROR_MSG_CONN_NO_ROUTE    = "no route to host"
-	ERROR_MSG_NETWORK_NO_START = "network not start"
+var (
+	MsgProxyNoSettings      string = "代理参数设置不完整"
+	MsgNotSupport           string = "访问了暂时不支持的功能"
+	MsgConnectFail          string = "连接失败(协议不匹配或服务未开启)"
+	MsgTimeOut              string = "出现超时错误"
+	MsgProxyManyConnections string = "代理暂时不能提供服务: 代理服务器有太多的连接"
+	MsgProxyErrID           string = "客户端标识不可用或无法验证"
+	MsgProxyRefusedFail     string = "请求被拒绝或失败"
+	MsgAccountAuthFail      string = "认证失败, 帐号或密码错误"
+	MsgNetworkNotConnect    string = "未连接到服务器"
+	MsgIOReadByNegative     string = "IO读入返回负数"
 )
