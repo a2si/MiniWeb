@@ -26,6 +26,7 @@ func (self *TNet) InitProxyHttps(conn net.Conn, Host string, Port string) {
 		self.ObjError.ProxyError503()
 	case 401:
 	}
+	Header = MsgInfo
 	//fmt.Println(MsgCode, MsgInfo)
 }
 

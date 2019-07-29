@@ -1,4 +1,4 @@
-package mwConst
+package mwError
 
 const (
 	ERROR_NO_ERROR            = iota
@@ -14,7 +14,6 @@ const (
 	ERROR_PROXY_NO_SUPPORT
 	ERROR_PROXY_AUTH_FAIL
 	ERROR_PROXY_OTHER_ERROR
-	
 
 	ERROR_CODE_NO_ERROR
 	ERROR_CODE_TOC
