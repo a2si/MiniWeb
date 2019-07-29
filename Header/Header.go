@@ -67,7 +67,7 @@ func (self *Header) ClearHeader() {
 func (self *Header) GetAllHeader() string {
 	var dwRet string
 	for k, v := range self.header {
-		dwRet = fmt.Sprintf("%s\r\n%s: %s", dwRet, k, v)
+		dwRet = fmt.Sprintf("%s%s: %s\r\n", dwRet, k, v)
 	}
 	return dwRet
 }

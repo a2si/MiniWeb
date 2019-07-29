@@ -267,7 +267,7 @@ func (self *WebCore) buildReqHeader() string {
 		MethodPath = fmt.Sprintf("%s://%s:%s%s", self.URL.GetScheme(), self.URL.GetHost(), self.URL.GetPort(), MethodPath)
 	}
 	dwRet = fmt.Sprintf("%s %s HTTP/1.1", self.Method, MethodPath)
-	dwRet = dwRet + self.ReqHeader.GetAllHeader() + "\r\n\r\n"
+	dwRet = fmt.Sprintf("%s\r\n%s\r\n", dwRet, self.ReqHeader.GetAllHeader())
 	//fmt.Println(dwRet)
 	return dwRet
 }
