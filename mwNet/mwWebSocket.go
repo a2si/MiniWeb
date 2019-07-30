@@ -128,9 +128,9 @@ func (self *TIOBuffer) WebSocketReadToCBHook(Event int, fn CBHOOK) {
 		if WF_MASK == 1 {
 			sByte = wsMask(WF_MASK_KEY, sByte)
 		}
-		fmt.Println("wsRecv: ", WF_FIN, WF_RSV1, WF_RSV2, WF_RSV3, WF_MASK, WF_MASK_KEY, WF_OPCODE, PlayLoadLen)
-		fmt.Println(string(sByte))
-		fmt.Println(hex.EncodeToString(sByte))
+		//fmt.Println("wsRecv: ", WF_FIN, WF_RSV1, WF_RSV2, WF_RSV3, WF_MASK, WF_MASK_KEY, WF_OPCODE, PlayLoadLen)
+		//fmt.Println(string(sByte))
+		//fmt.Println(hex.EncodeToString(sByte))
 		switch WF_OPCODE {
 		case 0x0: // %x0 表示一个持续帧
 			LastByte = append(LastByte, sByte...)

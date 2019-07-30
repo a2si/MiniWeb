@@ -69,7 +69,7 @@ func main() {
 		if wsNet != nil {
 			fmt.Println("===============")
 			wsNet.WebSocketSendText("Hello Test Server")
-			wsNet.WebSocketSendPing()
+			wsNet.WebSocketSendPing([]byte("ping msg"))
 		}
 	}
 }
