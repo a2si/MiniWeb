@@ -23,7 +23,7 @@ func (self *WebCore) InitHeader() {
 	self.ReqHeader.SetHeader("User-Agent", self.UserAgent)
 	self.ReqHeader.SetHeader("Accept", "*/*")
 	self.ReqHeader.SetHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
-	self.ReqHeader.SetHeader("Accept", "ext/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	self.ReqHeader.SetHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 	self.ReqHeader.SetHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
 	self.ReqHeader.SetHeader("Accept-Encoding", "gzip, deflate")
 	self.ReqHeader.SetHeader("Cache-Control", "max-age=0")
@@ -146,7 +146,7 @@ func (self *WebCore) readRspHeader(NetWork *mwNet.TNet) {
 	DevLogs.Debug("WebCore.readRspHeader")
 	for {
 		Text := NetWork.ReadLine()
-		fmt.Println(Text)
+		//fmt.Println(Text)
 		if Text == "\r\n" || Text == "" {
 			break
 		}
@@ -210,6 +210,7 @@ func (self *WebCore) genReqBody() []byte {
 func (self *WebCore) genReqHeader() []byte {
 	DevLogs.Debug("WebCore.genReqHeader")
 	Header := self.buildReqHeader()
+	//fmt.Println(Header)
 	return []byte(Header)
 }
 
@@ -242,8 +243,11 @@ func (self *WebCore) buildReqHeader() string {
 			Cookie: cookies
 			Header 因为GO的MAP机制, 这里是乱序的
 	*/
+	Cookie := self.Cookie.GetAllCookie()
 	dwRet = fmt.Sprintf("%s %s HTTP/1.1", self.Method, MethodPath)
-	dwRet = fmt.Sprintf("%s\r\nCookie: %s\r\n", dwRet, self.Cookie.GetAllCookie())
+	if len(Cookie) > 0 {
+		dwRet = fmt.Sprintf("%s\r\nCookie: %s", dwRet, Cookie)
+	}
 	dwRet = fmt.Sprintf("%s\r\n%s\r\n", dwRet, self.ReqHeader.GetAllHeader())
 
 	//fmt.Println(dwRet)

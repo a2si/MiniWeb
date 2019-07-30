@@ -58,6 +58,7 @@ func (self *Cookie) SetCookieDir(CookieDir string, Automkdir bool) {
 }
 
 func (self *Cookie) Clear() {
+	//fmt.Println("SetCookie::Clear")
 	self.prv_Cookie = make(map[string]string)
 }
 
@@ -67,6 +68,7 @@ func (self *Cookie) Count() int {
 
 // Cookie Name 区分大小写, 查了一下RFC, 没有明确规定
 func (self *Cookie) SetCookie(CookieName string, CookieValue string) {
+	//fmt.Println("SetCookie: ", CookieName, CookieValue)
 	self.prv_Cookie[CookieName] = CookieValue
 }
 
@@ -80,6 +82,7 @@ func (self *Cookie) GetAllCookie() string {
 	for k, v := range self.prv_Cookie {
 		dwRet = fmt.Sprintf("%s%s=%s; ", dwRet, k, v)
 	}
+	fmt.Println("GetAllCookie: ", dwRet)
 	return dwRet
 }
 
@@ -91,8 +94,8 @@ func (self *Cookie) Dump() {
 }
 
 func (self *Cookie) LoadCookie() {
-	self.Clear()
 	if self.bSaveCookie {
+		self.Clear()
 		if mwCommon.DirExists(self.prv_CookieDir) == false {
 			return
 		}

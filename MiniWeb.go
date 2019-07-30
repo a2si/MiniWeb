@@ -164,6 +164,7 @@ func (self *TMiniWeb) SetHttpMethod(Method string) {
 func (self *TMiniWeb) SetReferer(Referer string) {
 	DevLogs.Debug("MiniWeb.SetReferer Referer=" + Referer)
 	self.prv_Core.Referer = Referer
+	self.prv_Core.ReqHeader.SetHeader("Referer", Referer)
 }
 
 func (self *TMiniWeb) GetReferer() string {
@@ -174,6 +175,8 @@ func (self *TMiniWeb) GetReferer() string {
 func (self *TMiniWeb) SetUserAgent(UserAgent string) {
 	DevLogs.Debug("MiniWeb.SetUserAgent: UserAgent=" + UserAgent)
 	self.prv_Core.UserAgent = UserAgent
+	self.prv_Core.ReqHeader.SetHeader("User-Agent", UserAgent)
+
 }
 
 func (self *TMiniWeb) GetUserAgent() string {
