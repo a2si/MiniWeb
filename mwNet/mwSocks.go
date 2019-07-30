@@ -9,10 +9,20 @@ import (
 )
 
 /*
-	Socks4
+	SocksV4
 		http://www.ufasoft.com/doc/socks4_protocol.htm
-	Socks4a
+
+	SocksV4a
 		http://www.openssh.com/txt/socks4a.protocol
+
+	SocksV5
+		https://www.rfc-editor.org/rfc/rfc1928.txt
+
+	UserName/PassWord Authentication For SocksV5
+		https://www.rfc-editor.org/rfc/rfc1929.txt
+
+	GSSAPI For SocksV5
+		https://www.ietf.org/rfc/rfc1961.txt
 */
 
 func (self *TNet) genSocksConnect(Version int, Host string, Port string) []byte {

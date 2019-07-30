@@ -6,9 +6,9 @@ import (
 	"time"
 
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
-	mwProxy "github.com/a2si/MiniWeb/Proxy"
 	mwConfig "github.com/a2si/MiniWeb/mwConfig"
 	mwError "github.com/a2si/MiniWeb/mwError"
+	mwProxy "github.com/a2si/MiniWeb/mwProxy"
 )
 
 type TNet struct {
@@ -71,7 +71,10 @@ func (self *TNet) SendPacket(Packet []byte) {
 		self.ObjError.SetErrorMsg("Net.SendPacket.Send: 已发送 > needSend")
 		return
 	}
+}
 
+func (self *TNet) WebSocketReadToCBHook(Event int, fn CBHOOK) {
+	self.ioRead.WebSocketReadToCBHook(Event, fn)
 }
 
 func (self *TNet) Close() {

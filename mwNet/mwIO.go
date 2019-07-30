@@ -12,8 +12,6 @@ import (
 )
 
 type (
-	CBHOOK func(Event int, Msg string, data []byte)
-
 	Reader interface {
 		Read(p []byte) (n int, err error)
 	}
@@ -88,7 +86,6 @@ func (self *TIOBuffer) FlushBuffer() {
 	}
 	self.ioWrite += ioWrite
 	if err != nil {
-		fmt.Println(err, self.ioWrite, self.ioRead)
 		if err == io.EOF {
 			self.ioClosed = true
 			return
@@ -98,6 +95,7 @@ func (self *TIOBuffer) FlushBuffer() {
 			self.ioClosed = true
 			return
 		}
+		self.ioClosed = true
 		self.ioObjError.SetIOError(err)
 	}
 }
@@ -217,7 +215,7 @@ func (self *TIOBuffer) ReadToCBHook(Event int, fn CBHOOK) {
 		}
 		self.FlushBuffer()
 		bReadSize := self.Buffered()
-		fn(Event, "", self.protectRead(bReadSize))
+		fn(Event, nil, self.protectRead(bReadSize))
 	}
 }
 

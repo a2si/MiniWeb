@@ -8,6 +8,7 @@ const (
 	ERR_NETWORK_CONNECT_FAIL
 	ERR_NETWORK_TIMEOUT
 	ERR_NETWORK_NOT_CONNECT
+	ERR_NETWORK_REMOTE_CLOSE
 
 	ERR_PROXY_NOT_SETTINGS
 	ERR_PROXY_MANY_CONNECTIONS
@@ -30,4 +31,5 @@ var (
 	MsgAccountAuthFail      string = "认证失败, 帐号或密码错误"
 	MsgNetworkNotConnect    string = "未连接到服务器"
 	MsgIOReadByNegative     string = "IO读入返回负数"
+	MsgRemoteClose          string = "远端已关闭连接"
 )

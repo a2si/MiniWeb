@@ -4,15 +4,16 @@ import (
 	"net/url"
 	"time"
 
-	mwCookie "github.com/a2si/MiniWeb/Cookie"
-	mwCore "github.com/a2si/MiniWeb/Core"
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
-	mwHeader "github.com/a2si/MiniWeb/Header"
-	mwProxy "github.com/a2si/MiniWeb/Proxy"
-	mwURL "github.com/a2si/MiniWeb/UrlExtend"
-	mwUserAgent "github.com/a2si/MiniWeb/UserAgent"
 	mwConfig "github.com/a2si/MiniWeb/mwConfig"
+	mwCookie "github.com/a2si/MiniWeb/mwCookie"
+	mwCore "github.com/a2si/MiniWeb/mwCore"
 	mwError "github.com/a2si/MiniWeb/mwError"
+	mwHeader "github.com/a2si/MiniWeb/mwHeader"
+	mwNet "github.com/a2si/MiniWeb/mwNet"
+	mwProxy "github.com/a2si/MiniWeb/mwProxy"
+	mwURL "github.com/a2si/MiniWeb/mwURL"
+	mwUserAgent "github.com/a2si/MiniWeb/mwUserAgent"
 )
 
 type (
@@ -21,6 +22,7 @@ type (
 		prv_Error *mwError.TError
 		prv_Byte  []byte
 	}
+
 	iMiniWeb interface {
 		Cookie() *mwCookie.Cookie                       // Cookie 模块
 		ReqHeader() *mwHeader.Header                    // 请求HTTP头部
@@ -252,6 +254,17 @@ func (self *TMiniWeb) GetErrorCode() int {
 
 func (self *TMiniWeb) GetStatusCode() int {
 	return self.prv_Core.StatusCode
+}
+
+/*
+	WebSocket 采用回调方式接收/发送信息
+*/
+func (self *TMiniWeb) ConnectWebSocket(URL string, cbFunc mwNet.CBHOOK) int {
+	DevLogs.Debug("MiniWeb.ConnectWebSocket")
+	self.SetURL(URL)
+	self.prv_Core.RegisterCBHook(cbFunc)
+	dwCode := self.prv_Core.SendRequest()
+	return dwCode
 }
 
 func (self *TMiniWeb) GetWebCode(URL string) int {

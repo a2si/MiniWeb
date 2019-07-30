@@ -29,7 +29,16 @@ func (self *TError) SocketIOError(err error) {
 		self.SocketTimeoutError()
 		return
 	}
+	if strings.Contains(str, "write: broken pipe") {
+		self.SocketRemoteClose()
+		return
+	}
 	fmt.Println("SocketIOError: ", err)
+}
+
+func (self *TError) SocketRemoteClose() {
+	self.prv_ErrCode = ERR_NETWORK_REMOTE_CLOSE
+	self.prv_ErrMsg = MsgRemoteClose
 }
 
 func (self *TError) SocketNetWorkConnectFail() {
