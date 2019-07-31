@@ -8,14 +8,14 @@ import (
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 )
 
-func (self *TNet) InitTLS(conn net.Conn) {
+func (self *TNet) InitTLS(conn net.Conn, ServerName string) {
 	DevLogs.Debug("TNet.InitTLS")
 	TlsConfig := &tls.Config{
 		InsecureSkipVerify: true,
 	}
-	//c := TlsConfig.Clone()
-	//c.ServerName = "www.baidu.com"
-	//TlsConfig = c
+	c := TlsConfig.Clone()
+	c.ServerName = ServerName
+	TlsConfig = c
 
 	TlsConn := tls.Client(conn, TlsConfig)
 	err := TlsConn.Handshake()

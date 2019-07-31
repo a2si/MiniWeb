@@ -1,7 +1,6 @@
 package Proxy
 
 import (
-	mwConst "github.com/a2si/MiniWeb/mwConst"
 	mwError "github.com/a2si/MiniWeb/mwError"
 )
 
@@ -27,7 +26,7 @@ type TProxy struct {
 
 func NewProxy(errObj *mwError.TError) *TProxy {
 	Obj := &TProxy{
-		prv_ProxyMode: mwConst.PROXY_TYPE_NONE,
+		prv_ProxyMode: PROXY_TYPE_NONE,
 		ObjError:      errObj,
 	}
 	return Obj

@@ -131,8 +131,10 @@ func (self *TIOBuffer) ReadByte() byte {
 		}
 		self.FlushBuffer()
 	}
+	self.ioLock.Lock()
 	c := self.ioBuffer[self.ioRead]
 	self.ioRead++
+	self.ioLock.Unlock()
 	return c
 }
 
@@ -165,7 +167,6 @@ func (self *TIOBuffer) ReadLine() string {
 		if self.ioClosed || self.ioObjError.IsError() {
 			return string(sByte)
 		}
-
 	}
 }
 

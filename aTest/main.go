@@ -10,15 +10,14 @@ import (
 
 	mwWeb "github.com/a2si/MiniWeb"
 	mwConfig "github.com/a2si/MiniWeb/mwConfig"
-	mwConst "github.com/a2si/MiniWeb/mwConst"
 	mwNet "github.com/a2si/MiniWeb/mwNet"
+	mwProxy "github.com/a2si/MiniWeb/mwProxy"
 	JavaScript "github.com/dop251/goja"
 )
 
 var (
 	_ = JavaScript.AssertFunction
 	_ = mwWeb.NewMiniWeb
-	_ = mwConst.PROXY_TYPE_HTTP
 )
 
 func main() {
@@ -26,6 +25,7 @@ func main() {
 
 	mwConfig.SetConfig("Logs.Enable", false)
 	w := mwWeb.NewMiniWeb()
+	w.Proxy().SetProxyType(mwProxy.PROXY_TYPE_NONE)
 	w.SetUserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0")
 
 	w.SetTimeOutConnect(100)

@@ -14,8 +14,8 @@ import (
 
 	DevLogs "github.com/a2si/MiniWeb/DevLogs"
 	mwCommon "github.com/a2si/MiniWeb/mwCommon"
-	mwConst "github.com/a2si/MiniWeb/mwConst"
 	mwNet "github.com/a2si/MiniWeb/mwNet"
+	mwProxy "github.com/a2si/MiniWeb/mwProxy"
 )
 
 func (self *WebCore) InitHeader() {
@@ -70,7 +70,7 @@ func (self *WebCore) SendRequest() int {
 
 	// SSL传输层
 	if self.URL.IsTls() {
-		NetWork.InitTLS(RawConn)
+		NetWork.InitTLS(RawConn, self.URL.GetHost())
 	}
 
 	// 进入HTTP协议
@@ -243,7 +243,7 @@ func (self *WebCore) buildReqHeader() string {
 		如果是HTTP代理, 仅修改 GET Script == Get scheme://host:port/Script
 		同时, 如果有帐号密码, 设置 Proxy-Authorization
 	*/
-	if self.Proxy.GetProxyType() == mwConst.PROXY_TYPE_HTTP {
+	if self.Proxy.GetProxyType() == mwProxy.PROXY_TYPE_HTTP {
 		MethodPath = fmt.Sprintf("%s://%s:%s%s", self.URL.GetScheme(), self.URL.GetHost(), self.URL.GetPort(), MethodPath)
 		AuthBase64 := self.Proxy.GetBase64Authorization()
 		if len(AuthBase64) > 0 {

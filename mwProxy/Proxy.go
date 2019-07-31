@@ -2,8 +2,6 @@ package Proxy
 
 import (
 	"encoding/base64"
-
-	mwConst "github.com/a2si/MiniWeb/mwConst"
 )
 
 func (self *TProxy) SetProxyType(pType int) {
@@ -15,11 +13,11 @@ func (self *TProxy) GetProxyType() int {
 }
 
 func (self *TProxy) Enable() bool {
-	return self.prv_ProxyMode != mwConst.PROXY_TYPE_NONE
+	return self.prv_ProxyMode != PROXY_TYPE_NONE
 }
 
 func (self *TProxy) CancelProxy() {
-	self.prv_ProxyMode = mwConst.PROXY_TYPE_NONE
+	self.prv_ProxyMode = PROXY_TYPE_NONE
 }
 
 func (self *TProxy) SetProxyIP(IP string, Port string) {
